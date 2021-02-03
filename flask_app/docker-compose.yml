@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: 'postgres'
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+  #   POSTGRES_HOST_AUTH_METHOD: "trust"
+    ports:
+      - "5432:5432"
+    volumes:
+      - /data/pg_data:/var/lib/postgresql/data
+
+  flask-app:
+    restart: on-failure
+    build: .
+    image: flaskapp:v1.0
+    container_name: flaskapp
+    #environment:
+    # SQLALCHEMY_DATABASE_URI: 'postgresql://postgres@172.20.0.2:5432/postgres'
+    ports:
+      - "5000:5000"
+    volumes:
+      - /data/flask_web/label_UI:/app/
