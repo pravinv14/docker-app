@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    
+   	<title>Annotation App</title>
+</head>
+
+<body>
+    
+<header class="site-header">
+    <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+    <div class="container">
+        <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+                {% if current_user.is_authenticated %}
+                    <h6><a class="nav-item nav-link" href="{{ url_for('voice') }}">Voice</a></h6>
+                    <h6><a class="nav-item nav-link" href="{{ url_for('image') }}">Image</a></h6>
+                    <h6><a class="nav-item nav-link" href="{{ url_for('nlp') }}">NLP</a></h6>
+                    <h6><a class="nav-item nav-link" href="{{ url_for('rl') }}">RL</a></h6>
+                    <h6><a class="nav-item nav-link" href="{{ url_for('abt') }}">About</a></h6>
+                {% else %}
+                    <h3>UI for data Annotation</h3>
+                {% endif %}
+            </div>
+                
+            <div class="navbar-nav">
+                {% if current_user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{{ url_for('logo') }}">Logout</a>
+                {% else %}
+                    <h6><a class="nav-item nav-link" href="{{ url_for('abt') }}">About</a></h6>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    </nav>
+</header>
+    
+<main role="main" class="container">
+
+{% block body %}{% endblock body%}
+
+    
+</main>
+    
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

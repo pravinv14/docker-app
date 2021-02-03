@@ -1,0 +1,13 @@
+
+{% extends 'layout.html' %}
+{% block body %}
+
+	<div class="container">
+	{% if current_user.is_authenticated %}
+    	<b>Hi {{ current_user.uname }}</b>
+    {% else %}
+        <b>UI for Data Annotation</b>
+        <b>Annotation made simple</b>
+    {% endif %}
+	</div>
+{% endblock body %}

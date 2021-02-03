@@ -1,0 +1,148 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<div id="left-scroller">
+    <table id="lisongs" style="width:90%">
+        <thead>
+            <tr>
+                <th>Audio Clip Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for so,d in songs.items() %}
+            <tr>
+                <td><b><a href="#!" onclick="chg_music('static/{{so}}'); chg_text()">{{so}}</a></b></td>
+                <td id="{{ so }}"><b>{{d}}</b></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+    <script type="text/javascript">
+        function chg_music(music)
+        {
+        document.getElementById("mya").pause();
+        document.getElementById("mya").setAttribute('src', music);
+        document.getElementById("mya").load();
+        document.getElementById("mya").play();
+        }
+        
+        function chg_text()
+        {
+        var fi_name = document.getElementById("mya").src;
+        var fi = fi_name.split("/")
+        document.getElementById("filen").value = fi.pop();
+        
+        $.post("/voice_content",
+                {
+                hhh: fi_name.split("/").pop()
+                }
+              ).done(function(response)
+        {
+        document.getElementById("caption").value = response['text'];
+        var da = response['cvb'];
+        for (var k in da)
+        {
+        document.getElementById(k).innerHTML=da[k];
+        }
+        
+        if (response['disable_btn'] === 1){
+        $('#subm').prop('disabled',true);
+        } 
+        else{
+        $('#subm').prop('disabled',false);
+        }
+        }).fail(function(){
+        document.getElementById("caption").value = ''
+        });
+        }
+        
+        var aud = document.getElementById("mya"); 
+           function sPl(s) { 
+           aud.playbackRate = s;
+           }
+    </script>
+    
+<div id="right-fixedmenu">
+    <audio id='mya' controls='controls'>
+    Your browser doesn't support the audio format.
+    </audio><br>
+    <b><p id="playback-speed">Playback Speed : </p></b>
+    <div class="multi-button">
+        <button onclick="sPl(0.5)">0.5</button>
+        <button onclick="sPl(0.75)">0.75</button>
+        <button onclick="sPl(1)">1</button>
+    </div>
+    
+
+    
+    <form style="max-width:85%" method="POST" action="">
+    {{ form.hidden_tag() }}
+        <div class="form-group row">
+            {{ form.filen.label(class="col-sm-2 col-form-label") }}
+            {% if form.filen.errors %}
+                <div class="col-sm-10">
+                {{ form.filen(class="form-control is-invalid", readonly=true) }}
+                </div>
+                <div class="invalid-feedback">
+                    {% for error in form.filen.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="col-sm-10">
+                {{ form.filen(class="form-control-plaintext", readonly=true) }}
+                </div>
+            {% endif %}
+        </div>
+
+        <fieldset class="form-group">
+            <div class="form-group">
+                {% if form.caption.errors %}
+                    {{ form.caption(class="form-control form-control-sm is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.caption.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.caption(class="form-control",placeholder="Enter Caption here")|safe }}<br>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {% if form.emotion.errors %}                    
+                    <select id="emotion" name="emotion" class="form-control form-control-sm is-invalid" required=True>
+                        <option disabled selected value>Choose the tone detected</option>
+                        {% for o in form.emotion %}
+                            {{ o }}
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">
+                        {% for error in form.emotion.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <select id="emotion" name="emotion" class="form-control" required=True>
+                        <option disabled selected value>Choose the tone detected</option>
+                        {% for o in form.emotion %}
+                            {{ o }}
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </div><br>
+            {{ form.subm(class="btn btn-outline-info") }}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                      <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+        </fieldset>
+    </form>
+</div>
+{% endblock body %}
